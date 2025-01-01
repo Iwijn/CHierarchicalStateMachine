@@ -79,197 +79,215 @@ void* state4(StateMachine *sm, Event e)
 int test_event_up_chain()
 {
     printf("----- \"Event up chain\" test\n");
-    event_null_counter = 0;
+    int status = 1;
     StateMachine sm;
-    sm.currentState = state3;
-    handleEvent(&sm, (Event){EVENT_NULL, NULL}); // should be handled in state3, state2_0, state1, top
+    initStateMachine(&sm, state3);
+    event_null_counter = 0;
+    handleEvent(&sm, (Event){EVENT_NULL, NULL});
     if (event_null_counter == 4)
     {
         printf("successful\n");
-        return 0;
+        status = 0;
     }
     else
     {
         printf("failed\n");
-        return 1;
     }
+    destroyStateMachine(&sm);
+    return status;
 }
 
 int test_transition_to_parent()
 {
     printf("----- \"Transition to parent\" test\n");
+    int status = 1;
+    StateMachine sm;
+    initStateMachine(&sm, state3);
     event_exit_counter = 0;
     event_entry_counter = 0;
-    StateMachine sm;
-    sm.currentState = state3;
     transitionTo(&sm, state2_0);
     if (sm.currentState == state2_0 && event_exit_counter == 1 && event_entry_counter == 0)
     {
         printf("successful\n");
-        return 0;
+        status = 0;
     }
     else
     {
         printf("failed\n\tcorrect state: %p\n\tactual state: %p\n\texit counter: %d\n\tentry counter: %d\n", state2_0, sm.currentState, event_exit_counter, event_entry_counter);
-        return 1;
     }
+    destroyStateMachine(&sm);
+    return status;
 }
 
 int test_transition_to_grandparent()
 {
     printf("----- \"Transition to grandparent\" test\n");
+    int status = 1;
+    StateMachine sm;
+    initStateMachine(&sm, state3);
     event_exit_counter = 0;
     event_entry_counter = 0;
-    StateMachine sm;
-    sm.currentState = state3;
     transitionTo(&sm, state1);
     if (sm.currentState == state1 && event_exit_counter == 2 && event_entry_counter == 0)
     {
         printf("successful\n");
-        return 0;
+        status = 0;
     }
     else
     {
         printf("failed\n\tcorrect state: %p\n\tactual state: %p\n\texit counter: %d\n\tentry counter: %d\n", state1, sm.currentState, event_exit_counter, event_entry_counter);
-        return 1;
     }
+    destroyStateMachine(&sm);
+    return status;
 }
 
 
 int test_transition_to_child()
 {
     printf("----- \"Transition to child\" test\n");
+    int status = 1;
+    StateMachine sm;
+    initStateMachine(&sm, state2_0);
     event_exit_counter = 0;
     event_entry_counter = 0;
-    StateMachine sm;
-    sm.currentState = state2_0;
     transitionTo(&sm, state3);
     if (sm.currentState == state3 && event_exit_counter == 0 && event_entry_counter == 1)
     {
         printf("successful\n");
-        return 0;
+        status = 0;
     }
     else
     {
         printf("failed\n\tcorrect state: %p\n\tactual state: %p\n\texit counter: %d\n\tentry counter: %d\n", state3, sm.currentState, event_exit_counter, event_entry_counter);
-        return 1;
     }
+    destroyStateMachine(&sm);
+    return status;
 }
 
 
 int test_transition_to_grandchild()
 {
     printf("----- \"Transition to grandchild\" test\n");
+    int status = 1;
+    StateMachine sm;
+    initStateMachine(&sm, state1);
     event_exit_counter = 0;
     event_entry_counter = 0;
-    StateMachine sm;
-    sm.currentState = state1;
     transitionTo(&sm, state3);
     if (sm.currentState == state3 && event_exit_counter == 0 && event_entry_counter == 2)
     {
         printf("successful\n");
-        return 0;
+        status = 0;
     }
     else
     {
         printf("failed\n\tcorrect state: %p\n\tactual state: %p\n\texit counter: %d\n\tentry counter: %d\n", state1, sm.currentState, event_exit_counter, event_entry_counter);
-        return 1;
     }
+    destroyStateMachine(&sm);
+    return status;
 }
 
 
 int test_transition_to_sibling()
 {
     printf("----- \"Transition to sibling\" test\n");
+    int status = 1;
+    StateMachine sm;
+    initStateMachine(&sm, state2_0);
     event_exit_counter = 0;
     event_entry_counter = 0;
-    StateMachine sm;
-    sm.currentState = state2_0;
     transitionTo(&sm, state2_1);
     if (sm.currentState == state2_1 && event_exit_counter == 1 && event_entry_counter == 1)
     {
         printf("successful\n");
-        return 0;
+        status = 0;
     }
     else
     {
         printf("failed\n\tcorrect state: %p\n\tactual state: %p\n\texit counter: %d\n\tentry counter: %d\n", state2_1, sm.currentState, event_exit_counter, event_entry_counter);
-        return 1;
     }
+    destroyStateMachine(&sm);
+    return status;
 }
 
 int test_transition_to_aunt()
 {
     printf("----- \"Transition to aunt\" test\n");
+    int status = 1;
+    StateMachine sm;
+    initStateMachine(&sm, state3);
     event_exit_counter = 0;
     event_entry_counter = 0;
-    StateMachine sm;
-    sm.currentState = state3;
     transitionTo(&sm, state2_1);
     if (sm.currentState == state2_1 && event_exit_counter == 2 && event_entry_counter == 1)
     {
         printf("successful\n");
-        return 0;
+        status = 0;
     }
     else
     {
         printf("failed\n\tcorrect state: %p\n\tactual state: %p\n\texit counter: %d\n\tentry counter: %d\n", state2_1, sm.currentState, event_exit_counter, event_entry_counter);
-        return 1;
     }
+    destroyStateMachine(&sm);
+    return status;
 }
 
 int test_transition_to_niece_lower_generation()
 {
     printf("----- \"Transition to niece lower generation\" test\n");
+    int status = 1;
+    StateMachine sm;
+    initStateMachine(&sm, state2_1);
     event_exit_counter = 0;
     event_entry_counter = 0;
-    StateMachine sm;
-    sm.currentState = state2_1;
     transitionTo(&sm, state3);
     if (sm.currentState == state3 && event_exit_counter == 1 && event_entry_counter == 2)
     {
         printf("successful\n");
-        return 0;
+        status = 0;
     }
     else
     {
         printf("failed\n\tcorrect state: %p\n\tactual state: %p\n\texit counter: %d\n\tentry counter: %d\n", state3, sm.currentState, event_exit_counter, event_entry_counter);
-        return 1;
     }
+    destroyStateMachine(&sm);
+    return status;
 }
 
 
 int test_transition_to_niece_same_generation()
 {
     printf("----- \"Transition to niece same generation\" test\n");
+    int status = 1;
+    StateMachine sm;
+    initStateMachine(&sm, state3);
     event_exit_counter = 0;
     event_entry_counter = 0;
-    StateMachine sm;
-    sm.currentState = state3;
     transitionTo(&sm, state4);
     if (sm.currentState == state4 && event_exit_counter == 2 && event_entry_counter == 2)
     {
         printf("successful\n");
-        return 0;
+        status = 0;
     }
     else
     {
         printf("failed\n\tcorrect state: %p\n\tactual state: %p\n\texit counter: %d\n\tentry counter: %d\n", state4, sm.currentState, event_exit_counter, event_entry_counter);
-        return 1;
     }
+    destroyStateMachine(&sm);
+    return status;
 }
 
 int run_unit_tests()
 {
-    if (test_event_up_chain()) return 1;
-    if (test_transition_to_parent()) return 1;
-    if (test_transition_to_grandparent()) return 1;
-    if (test_transition_to_child()) return 1;
-    if (test_transition_to_grandchild()) return 1;
-    if (test_transition_to_sibling()) return 1;
-    if (test_transition_to_aunt()) return 1;
-    if (test_transition_to_niece_lower_generation()) return 1;
-    if (test_transition_to_niece_same_generation()) return 1;
+    if (test_event_up_chain()) return 1; 
+    if (test_transition_to_parent()) return 1; 
+    if (test_transition_to_grandparent()) return 1; 
+    if (test_transition_to_child()) return 1; 
+    if (test_transition_to_grandchild()) return 1; 
+    if (test_transition_to_sibling()) return 1; 
+    if (test_transition_to_aunt()) return 1; 
+    if (test_transition_to_niece_lower_generation()) return 1; 
+    if (test_transition_to_niece_same_generation()) return 1; 
 
     printf("All unit tests successful\n");
     return 0;

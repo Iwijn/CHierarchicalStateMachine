@@ -4,26 +4,15 @@
 
 int run_integration_tests()
 {
-    // We need the usleeps because the other thread needs to handle the events we push
-
     // Init the state machine
     StateMachine sm;
-    initStateMachine(&sm, top);
-    usleep(PUSH_EVENT_DELAY);
-    if (sm.currentState != top)
-    {
-        printf("State is not top after init!\n");
-        return 1;
-    }
-
-    pushEvent(&sm, (Event){EVENT_INIT, NULL});
+    initStateMachine(&sm, top); // will enter top, then push init event, which will cause transition into playerAlive
     usleep(PUSH_EVENT_DELAY);
     if (sm.currentState != playerAlive)
     {
         printf("State is not playerAlive after EVENT_INIT!\n");
         return 1;
     }
-
 
     // Simulate left arrow press and release    
     pushEvent(&sm, (Event){EVENT_LEFT_ARROW_DOWN});
@@ -133,7 +122,6 @@ int run_integration_tests()
         return 1;
     }
 
-    
     destroyStateMachine(&sm);
 
     printf("All integration tests successful\n");

@@ -1,6 +1,6 @@
 #include "StateMachine.h"
 
-#define STATEMACHINE_PRINT_DEBUG 1
+#define STATEMACHINE_PRINT_DEBUG 0
 
 #define MAX_DEPTH (10)
 #define EVENT_QUEUE_CAPACITY (10)
@@ -9,6 +9,8 @@
 void* event_loop(void *arg);
 EventQueue* create_event_queue(int capacity);
 void destroy_event_queue(EventQueue *queue);
+void enqueue_priority(EventQueue *queue, Event event, int priority);
+void enqueue_front(EventQueue *queue, Event event);
 void enqueue(EventQueue *queue, Event event);
 Event dequeue(EventQueue *queue);
 
@@ -59,7 +61,7 @@ void destroy_event_queue(EventQueue *queue)
 }
 
 // Function to add an event to the queue
-void enqueue(EventQueue *queue, Event event)
+void enqueue_priority(EventQueue *queue, Event event, int priority)
 {
     pthread_mutex_lock(&queue->mutex);
     
@@ -69,15 +71,30 @@ void enqueue(EventQueue *queue, Event event)
         pthread_cond_wait(&queue->cond_var, &queue->mutex);
     }
 
-    // Add the event to the queue
-    queue->rear = (queue->rear + 1) % queue->capacity;
-    queue->events[queue->rear] = event;
+    if (priority) {
+        // Add the event to the front of the queue
+        queue->front = (queue->front - 1 + queue->capacity) % queue->capacity;
+        queue->events[queue->front] = event;
+    } else {
+        // Add the event to the back of the queue
+        queue->rear = (queue->rear + 1) % queue->capacity;
+        queue->events[queue->rear] = event;
+    }
     queue->size++;
 
     // Signal that an event has been added
     pthread_cond_signal(&queue->cond_var);
     
     pthread_mutex_unlock(&queue->mutex);
+}
+
+void enqueue_front(EventQueue *queue, Event event)
+{
+    enqueue_priority(queue, event, 1);
+}
+void enqueue(EventQueue *queue, Event event)
+{
+    enqueue_priority(queue, event, 0);
 }
 
 // Function to remove an event from the queue
@@ -110,7 +127,8 @@ void initStateMachine(StateMachine *sm, State initialState)
     sm->currentState = initialState;
     sm->eventQueue = create_event_queue(EVENT_QUEUE_CAPACITY);
     pthread_create(&sm->loop_thread, NULL, event_loop, (void *)sm);
-    enqueue(sm->eventQueue, (Event){EVENT_ENTRY, NULL});
+    sm->currentState(sm, (Event){EVENT_ENTRY, NULL}); // DO NOT queue, entry needs to be done immediately.
+    enqueue(sm->eventQueue, (Event){EVENT_INIT, NULL}); // DO queue, init can do a dynamic transition, which is not part of the initialization of the state machine
 }
 
 void destroyStateMachine(StateMachine *sm)
@@ -129,6 +147,7 @@ void handleEvent(StateMachine *sm, Event event)
 {
     // If child state does not catch, pass event to parent state.
     State parentState = sm->currentState(sm, event);
+    if (event.type == EVENT_INIT) return; // Init events are not passed up the chain
     while(parentState != NULL)
     {
         parentState = parentState(sm, event);
@@ -212,4 +231,9 @@ void transitionTo(StateMachine *sm, State newState)
 
     // Update state
     sm->currentState = newState;
+
+    // INIT
+    // We need to use the event queue to handle the INIT event since the init event can do another dynamic transition.
+    // Calling the function here directly would then cause a recursive call to this function.
+    enqueue_front(sm->eventQueue, (Event){EVENT_INIT, NULL});
 }
