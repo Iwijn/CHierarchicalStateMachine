@@ -16,6 +16,10 @@ typedef struct MousePosition {
     int y;
 } MousePosition;
 
+typedef struct StateMachineData {
+    MousePosition mousePosition;
+} StateMachineData;
+
 // public
 void* top(StateMachine *sm, Event e);
 // private, public for testing

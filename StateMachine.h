@@ -35,10 +35,12 @@ typedef struct EventQueue {
 
 
 // Define the StateMachine struct
+typedef struct StateMachineData StateMachineData; // Opague data type, is defined by user of statemachine
 struct StateMachine {
     State currentState;
     EventQueue *eventQueue;
     pthread_t loop_thread;
+    StateMachineData *data;
 };
 
 

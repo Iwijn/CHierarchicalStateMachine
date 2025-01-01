@@ -6,6 +6,8 @@ void* top(StateMachine *sm, Event e)
     {
         case EVENT_ENTRY:
             printf("ENTRY in state: %s\n", __func__);
+            // Allocate statemachine data
+            sm->data = malloc(sizeof(StateMachineData));
             return NULL;
         case EVENT_INIT:
             printf("INIT in state: %s\n", __func__);
@@ -13,8 +15,8 @@ void* top(StateMachine *sm, Event e)
             return NULL;
         case EVENT_EXIT:
             printf("EXIT in state: %s\n", __func__);
-            return NULL;
-        case EVENT_NULL:
+            // Deallocate statemachine data
+            free(sm->data);
             return NULL;
         case EVENT_PLAYER_DEAD:
             transitionTo(sm, playerDead);
@@ -22,13 +24,11 @@ void* top(StateMachine *sm, Event e)
         case EVENT_MOUSE_POSITION:
             MousePosition *mp = (MousePosition*)e.data;
             printf("Mouse position: x: %d, y: %d\n", mp->x, mp->y);
-
-            // In reality we would probably dealloc the memory, but our test will check this data.
-            mp->x = 404;
-            mp->y = 404;
+            sm->data->mousePosition = (MousePosition){mp->x, mp->y};
+            free(e.data); // We the catcher of the event is responsible for freeing the data when its done with it
             return NULL;
         default:
-            printf("!!!Uncaught event %d in state: %s\n", e.type, __func__);
+            if (e.type != EVENT_NULL) ("!!!Uncaught event %d in state: %s\n", e.type, __func__);
             break;
     }
     return NULL;

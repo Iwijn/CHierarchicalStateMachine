@@ -122,12 +122,14 @@ int run_integration_tests()
     }
 
     // Simulate mouse position event
-    MousePosition mp = {10, 20};
-    pushEvent(&sm, (Event){EVENT_MOUSE_POSITION, &mp});
+    MousePosition *mp = malloc(sizeof(MousePosition));
+    *mp = (MousePosition){123, 456};
+
+    pushEvent(&sm, (Event){EVENT_MOUSE_POSITION, mp});
     usleep(PUSH_EVENT_DELAY);
-    if (mp.x != 404 || mp.y != 404)
+    if (sm.data->mousePosition.x != 123 || sm.data->mousePosition.y != 456)
     {
-        printf("Mouse position was not changed by state machine!\n");
+        printf("Mouse position was not saved by state machine!\n");
         return 1;
     }
 
