@@ -1,6 +1,6 @@
 #include "StateMachine.h"
 
-#define STATEMACHINE_PRINT_DEBUG 0
+#define STATEMACHINE_PRINT_DEBUG 1
 
 #define MAX_DEPTH (10)
 #define EVENT_QUEUE_CAPACITY (10)
@@ -13,7 +13,8 @@ void enqueue(EventQueue *queue, Event event);
 Event dequeue(EventQueue *queue);
 
 // The event loop function running in a separate thread
-void* event_loop(void *arg) {
+void* event_loop(void *arg)
+{
     StateMachine *sm = (StateMachine *)arg;
 
     while (1) {
@@ -35,7 +36,8 @@ void* event_loop(void *arg) {
 
 
 // Function to initialize the event queue
-EventQueue* create_event_queue(int capacity) {
+EventQueue* create_event_queue(int capacity)
+{
     EventQueue *queue = malloc(sizeof(EventQueue));
     queue->capacity = capacity;
     queue->size = 0;
@@ -48,7 +50,8 @@ EventQueue* create_event_queue(int capacity) {
 }
 
 // Function to destroy the event queue
-void destroy_event_queue(EventQueue *queue) {
+void destroy_event_queue(EventQueue *queue)
+{
     free(queue->events);
     pthread_mutex_destroy(&queue->mutex);
     pthread_cond_destroy(&queue->cond_var);
@@ -56,7 +59,8 @@ void destroy_event_queue(EventQueue *queue) {
 }
 
 // Function to add an event to the queue
-void enqueue(EventQueue *queue, Event event) {
+void enqueue(EventQueue *queue, Event event)
+{
     pthread_mutex_lock(&queue->mutex);
     
     // Wait if the queue is full
@@ -77,7 +81,8 @@ void enqueue(EventQueue *queue, Event event) {
 }
 
 // Function to remove an event from the queue
-Event dequeue(EventQueue *queue) {
+Event dequeue(EventQueue *queue)
+{
     pthread_mutex_lock(&queue->mutex);
 
     // Wait if the queue is empty

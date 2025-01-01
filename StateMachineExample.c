@@ -1,10 +1,5 @@
 #include "StateMachineExample.h"
 
-// void* top(StateMachine *sm, Event e);
-    // void* playerAlive(StateMachine *sm, Event e);
-    //     void* playerMovingLeft(StateMachine *sm, Event e);
-    //     void* playerMovingRight(StateMachine *sm, Event e);
-
 void* top(StateMachine *sm, Event e)
 {
     switch (e.type)

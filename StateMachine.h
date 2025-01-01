@@ -9,7 +9,7 @@ typedef enum {
     EVENT_INIT,
     EVENT_EXIT,
     EVENT_NULL
-} EventType; // TODO make struct that can hold data
+} EventType;
 
 typedef struct Event {
     int type;

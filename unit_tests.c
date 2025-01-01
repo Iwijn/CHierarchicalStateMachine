@@ -271,6 +271,6 @@ int run_unit_tests()
     if (test_transition_to_niece_lower_generation()) return 1;
     if (test_transition_to_niece_same_generation()) return 1;
 
-    printf("All tests successful\n");
+    printf("All unit tests successful\n");
     return 0;
 }
