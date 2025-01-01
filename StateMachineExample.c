@@ -7,7 +7,7 @@
 
 void* top(StateMachine *sm, Event e)
 {
-    switch (e)
+    switch (e.type)
     {
         case EVENT_ENTRY:
             printf("ENTRY in state: %s\n", __func__);
@@ -24,8 +24,16 @@ void* top(StateMachine *sm, Event e)
         case EVENT_PLAYER_DEAD:
             transitionTo(sm, playerDead);
             return NULL;
+        case EVENT_MOUSE_POSITION:
+            MousePosition *mp = (MousePosition*)e.data;
+            printf("Mouse position: x: %d, y: %d\n", mp->x, mp->y);
+
+            // In reality we would probably dealloc the memory, but our test will check this data.
+            mp->x = 404;
+            mp->y = 404;
+            return NULL;
         default:
-            printf("!!!Uncaught event %d in state: %s\n", e, __func__);
+            printf("!!!Uncaught event %d in state: %s\n", e.type, __func__);
             break;
     }
     return NULL;
@@ -33,7 +41,7 @@ void* top(StateMachine *sm, Event e)
 
 void* playerAlive(StateMachine *sm, Event e)
 {
-    switch (e)
+    switch (e.type)
     {
         case EVENT_ENTRY:
             printf("ENTRY in state: %s\n", __func__);
@@ -53,7 +61,7 @@ void* playerAlive(StateMachine *sm, Event e)
 
 void* playerMovingLeft(StateMachine *sm, Event e)
 {
-    switch (e)
+    switch (e.type)
     {
         case EVENT_ENTRY:
             printf("ENTRY in state: %s\n", __func__);
@@ -73,7 +81,7 @@ void* playerMovingLeft(StateMachine *sm, Event e)
 
 void* playerMovingRight(StateMachine *sm, Event e)
 {
-    switch (e)
+    switch (e.type)
     {
         case EVENT_ENTRY:
             printf("ENTRY in state: %s\n", __func__);
@@ -92,7 +100,7 @@ void* playerMovingRight(StateMachine *sm, Event e)
 
 void* playerDead(StateMachine *sm, Event e)
 {
-    switch (e)
+    switch (e.type)
     {
         case EVENT_ENTRY:
             printf("ENTRY in state: %s\n", __func__);

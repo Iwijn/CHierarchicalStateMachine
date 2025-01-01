@@ -19,11 +19,11 @@ void* event_loop(void *arg) {
     while (1) {
         Event event = dequeue(sm->eventQueue); // Get an event from the queue
         #if STATEMACHINE_PRINT_DEBUG
-        printf("Processing event ID: %d\n", event); // Process the event
+        printf("Processing event ID: %d\n", event.type); // Process the event
         #endif
         
         // -1 to break out of this loop for graceful shutdown.
-        if (event == -1) {
+        if (event.type == -1) {
             break;
         }
 
@@ -105,12 +105,12 @@ void initStateMachine(StateMachine *sm, State initialState)
     sm->currentState = initialState;
     sm->eventQueue = create_event_queue(EVENT_QUEUE_CAPACITY);
     pthread_create(&sm->loop_thread, NULL, event_loop, (void *)sm);
-    enqueue(sm->eventQueue, EVENT_ENTRY);
+    enqueue(sm->eventQueue, (Event){EVENT_ENTRY, NULL});
 }
 
 void destroyStateMachine(StateMachine *sm)
 {
-    enqueue(sm->eventQueue, -1); // Signal the event loop to exit
+    enqueue(sm->eventQueue, (Event){-1, NULL}); // Signal the event loop to exit
     pthread_join(sm->loop_thread, NULL);
     destroy_event_queue(sm->eventQueue);
 }
@@ -162,8 +162,8 @@ void findCommonAncestor(State* currentStateHierarchy, State* newStateHierarchy, 
             }
         }
         // Common ancestor not found, progress 1 up the hierachy of both current and new state
-        currentStateHierarchy[i+1] = currentStateHierarchy[i](sm, EVENT_NULL);
-        newStateHierarchy[i+1] = newStateHierarchy[i](sm, EVENT_NULL);
+        currentStateHierarchy[i+1] = currentStateHierarchy[i](sm, (Event){EVENT_NULL, NULL});
+        newStateHierarchy[i+1] = newStateHierarchy[i](sm, (Event){EVENT_NULL, NULL});
         i++;
     }
 
@@ -189,7 +189,7 @@ void transitionTo(StateMachine *sm, State newState)
         #if STATEMACHINE_PRINT_DEBUG
         printf("Exiting state: %p\n", currentStateHierarchy[k]);
         #endif
-        currentStateHierarchy[k](sm, EVENT_EXIT);
+        currentStateHierarchy[k](sm, (Event){EVENT_EXIT, NULL});
     }
 
     #if STATEMACHINE_PRINT_DEBUG
@@ -202,7 +202,7 @@ void transitionTo(StateMachine *sm, State newState)
         #if STATEMACHINE_PRINT_DEBUG
         printf("Entering state: %p\n", newStateHierarchy[k]);
         #endif
-        newStateHierarchy[k](sm, EVENT_ENTRY);
+        newStateHierarchy[k](sm, (Event){EVENT_ENTRY, NULL});
     }
 
     // Update state

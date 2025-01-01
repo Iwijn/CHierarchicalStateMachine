@@ -7,8 +7,14 @@ typedef enum {
     EVENT_RIGHT_ARROW_DOWN,
     EVENT_RIGHT_ARROW_UP,
     EVENT_PLAYER_DEAD,
-    EVENT_RESPAWN
+    EVENT_RESPAWN,
+    EVENT_MOUSE_POSITION,
 } GAME_EVENT;
+
+typedef struct MousePosition {
+    int x;
+    int y;
+} MousePosition;
 
 // public
 void* top(StateMachine *sm, Event e);

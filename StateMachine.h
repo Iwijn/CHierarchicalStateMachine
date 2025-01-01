@@ -9,7 +9,12 @@ typedef enum {
     EVENT_INIT,
     EVENT_EXIT,
     EVENT_NULL
-} Event; // TODO make struct that can hold data
+} EventType; // TODO make struct that can hold data
+
+typedef struct Event {
+    int type;
+    void *data;
+} Event;
 
 // Forward declare the StateMachine struct
 typedef struct StateMachine StateMachine;

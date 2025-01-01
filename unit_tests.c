@@ -7,72 +7,72 @@ int event_null_counter = 0;
 
 static void* top(StateMachine *sm, Event e)
 {
-    printf("top state with event %d\n", e);
-    if (e == EVENT_ENTRY) event_entry_counter++;
-    if (e == EVENT_INIT) event_init_counter++;
-    if (e == EVENT_EXIT) event_exit_counter++;
-    if (e == EVENT_NULL) event_null_counter++;
+    printf("top state with event %d\n", e.type);
+    if (e.type == EVENT_ENTRY) event_entry_counter++;
+    if (e.type == EVENT_INIT) event_init_counter++;
+    if (e.type == EVENT_EXIT) event_exit_counter++;
+    if (e.type == EVENT_NULL) event_null_counter++;
     return NULL;
 }
 
 void* state1(StateMachine *sm, Event e)
 {
-    printf("State 1 with event %d\n", e);
-    if (e == EVENT_ENTRY) event_entry_counter++;
-    if (e == EVENT_INIT) event_init_counter++;
-    if (e == EVENT_EXIT) event_exit_counter++;
-    if (e == EVENT_NULL) event_null_counter++;
+    printf("State 1 with event %d\n", e.type);
+    if (e.type == EVENT_ENTRY) event_entry_counter++;
+    if (e.type == EVENT_INIT) event_init_counter++;
+    if (e.type == EVENT_EXIT) event_exit_counter++;
+    if (e.type == EVENT_NULL) event_null_counter++;
     return top;
 }
 
 void* state2_0(StateMachine *sm, Event e)
 {
-    printf("State 2_0 with event %d\n", e);
-    if (e == EVENT_ENTRY) event_entry_counter++;
-    if (e == EVENT_INIT) event_init_counter++;
-    if (e == EVENT_EXIT) event_exit_counter++;
-    if (e == EVENT_NULL) event_null_counter++;
+    printf("State 2_0 with event %d\n", e.type);
+    if (e.type == EVENT_ENTRY) event_entry_counter++;
+    if (e.type == EVENT_INIT) event_init_counter++;
+    if (e.type == EVENT_EXIT) event_exit_counter++;
+    if (e.type == EVENT_NULL) event_null_counter++;
     return state1;
 }
 
 void* state2_1(StateMachine *sm, Event e)
 {
-    printf("State 2_1 with event %d\n", e);
-    if (e == EVENT_ENTRY) event_entry_counter++;
-    if (e == EVENT_INIT) event_init_counter++;
-    if (e == EVENT_EXIT) event_exit_counter++;
-    if (e == EVENT_NULL) event_null_counter++;
+    printf("State 2_1 with event %d\n", e.type);
+    if (e.type == EVENT_ENTRY) event_entry_counter++;
+    if (e.type == EVENT_INIT) event_init_counter++;
+    if (e.type == EVENT_EXIT) event_exit_counter++;
+    if (e.type == EVENT_NULL) event_null_counter++;
     return state1;
 }
 
 void* state2_2(StateMachine *sm, Event e)
 {
-    printf("State 2_2 with event %d\n", e);
-    if (e == EVENT_ENTRY) event_entry_counter++;
-    if (e == EVENT_INIT) event_init_counter++;
-    if (e == EVENT_EXIT) event_exit_counter++;
-    if (e == EVENT_NULL) event_null_counter++;
+    printf("State 2_2 with event %d\n", e.type);
+    if (e.type == EVENT_ENTRY) event_entry_counter++;
+    if (e.type == EVENT_INIT) event_init_counter++;
+    if (e.type == EVENT_EXIT) event_exit_counter++;
+    if (e.type == EVENT_NULL) event_null_counter++;
     return state1;
 }
 
 void* state3(StateMachine *sm, Event e)
 {
-    printf("State 3 with event %d\n", e);
-    if (e == EVENT_ENTRY) event_entry_counter++;
-    if (e == EVENT_INIT) event_init_counter++;
-    if (e == EVENT_EXIT) event_exit_counter++;
-    if (e == EVENT_NULL) event_null_counter++;
+    printf("State 3 with event %d\n", e.type);
+    if (e.type == EVENT_ENTRY) event_entry_counter++;
+    if (e.type == EVENT_INIT) event_init_counter++;
+    if (e.type == EVENT_EXIT) event_exit_counter++;
+    if (e.type == EVENT_NULL) event_null_counter++;
     return state2_0;
 }
 
 
 void* state4(StateMachine *sm, Event e)
 {
-    printf("State 3 with event %d\n", e);
-    if (e == EVENT_ENTRY) event_entry_counter++;
-    if (e == EVENT_INIT) event_init_counter++;
-    if (e == EVENT_EXIT) event_exit_counter++;
-    if (e == EVENT_NULL) event_null_counter++;
+    printf("State 3 with event %d\n", e.type);
+    if (e.type == EVENT_ENTRY) event_entry_counter++;
+    if (e.type == EVENT_INIT) event_init_counter++;
+    if (e.type == EVENT_EXIT) event_exit_counter++;
+    if (e.type == EVENT_NULL) event_null_counter++;
     return state2_1;
 }
 
@@ -82,7 +82,7 @@ int test_event_up_chain()
     event_null_counter = 0;
     StateMachine sm;
     sm.currentState = state3;
-    handleEvent(&sm, EVENT_NULL); // should be handled in state3, state2_0, state1, top
+    handleEvent(&sm, (Event){EVENT_NULL, NULL}); // should be handled in state3, state2_0, state1, top
     if (event_null_counter == 4)
     {
         printf("successful\n");

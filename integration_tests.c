@@ -14,7 +14,7 @@ int run_integration_tests()
         return 1;
     }
 
-    pushEvent(&sm, EVENT_INIT);
+    pushEvent(&sm, (Event){EVENT_INIT, NULL});
     sleep(0.1);
     if (sm.currentState != playerAlive)
     {
@@ -24,7 +24,7 @@ int run_integration_tests()
 
 
     // Simulate left arrow press and release    
-    pushEvent(&sm, EVENT_LEFT_ARROW_DOWN);
+    pushEvent(&sm, (Event){EVENT_LEFT_ARROW_DOWN});
     sleep(0.1);
     if (sm.currentState != playerMovingLeft)
     {
@@ -32,7 +32,7 @@ int run_integration_tests()
         return 1;
     }
 
-    pushEvent(&sm, EVENT_LEFT_ARROW_UP);
+    pushEvent(&sm, (Event){EVENT_LEFT_ARROW_UP});
     sleep(0.1);
     if (sm.currentState != playerAlive)
     {
@@ -42,7 +42,7 @@ int run_integration_tests()
 
     
     // Simulate left arrow press, and right arrow press without left release
-    pushEvent(&sm, EVENT_LEFT_ARROW_DOWN);
+    pushEvent(&sm, (Event){EVENT_LEFT_ARROW_DOWN});
     sleep(0.1);
     if (sm.currentState != playerMovingLeft)
     {
@@ -50,7 +50,7 @@ int run_integration_tests()
         return 1;
     }
 
-    pushEvent(&sm, EVENT_RIGHT_ARROW_DOWN);
+    pushEvent(&sm, (Event){EVENT_RIGHT_ARROW_DOWN});
     sleep(0.1);
     if (sm.currentState != playerMovingRight)
     {
@@ -58,7 +58,7 @@ int run_integration_tests()
         return 1;
     }
 
-    pushEvent(&sm, EVENT_RIGHT_ARROW_UP);
+    pushEvent(&sm, (Event){EVENT_RIGHT_ARROW_UP});
     sleep(0.1);
     if (sm.currentState != playerAlive)
     {
@@ -67,28 +67,28 @@ int run_integration_tests()
     }
 
     // Simulate player dies while standing still and buttons are pressed and released while dead, then respawn
-    pushEvent(&sm, EVENT_PLAYER_DEAD);
+    pushEvent(&sm, (Event){EVENT_PLAYER_DEAD});
     sleep(0.1);
     if (sm.currentState != playerDead)
     {
         printf("State is not playerDead after EVENT_PLAYER_DEAD!\n");
         return 1;
     }
-    pushEvent(&sm, EVENT_RIGHT_ARROW_DOWN);
+    pushEvent(&sm, (Event){EVENT_RIGHT_ARROW_DOWN});
     sleep(0.1);
     if (sm.currentState != playerDead)
     {
         printf("State changes after EVENT_RIGHT_ARROW_DOWN but player is dead!\n");
         return 1;
     }
-    pushEvent(&sm, EVENT_RIGHT_ARROW_UP);
+    pushEvent(&sm, (Event){EVENT_RIGHT_ARROW_UP});
     sleep(0.1);
     if (sm.currentState != playerDead)
     {
         printf("State changes after EVENT_RIGHT_ARROW_DOWN but player is dead!\n");
         return 1;
     }
-    pushEvent(&sm, EVENT_RESPAWN);
+    pushEvent(&sm, (Event){EVENT_RESPAWN});
     sleep(0.1);
     if (sm.currentState != playerAlive)
     {
@@ -97,25 +97,35 @@ int run_integration_tests()
     }
 
     // Simulate player dies while moving right and respawns
-    pushEvent(&sm, EVENT_RIGHT_ARROW_DOWN);
+    pushEvent(&sm, (Event){EVENT_RIGHT_ARROW_DOWN});
     sleep(0.1);
     if (sm.currentState != playerMovingRight)
     {
         printf("State is not playerMovingRight after EVENT_RIGHT_ARROW_DOWN!\n");
         return 1;
     }
-    pushEvent(&sm, EVENT_PLAYER_DEAD);
+    pushEvent(&sm, (Event){EVENT_PLAYER_DEAD});
     sleep(0.1);
     if (sm.currentState != playerDead)
     {
         printf("State is not playerDead after EVENT_PLAYER_DEAD!\n");
         return 1;
     }
-    pushEvent(&sm, EVENT_RESPAWN);
+    pushEvent(&sm, (Event){EVENT_RESPAWN});
     sleep(0.1);
     if (sm.currentState != playerAlive)
     {
         printf("State is not playerAlive after EVENT_RESPAWN!\n");
+        return 1;
+    }
+
+    // Simulate mouse position event
+    MousePosition mp = {10, 20};
+    pushEvent(&sm, (Event){EVENT_MOUSE_POSITION, &mp});
+    sleep(0.1);
+    if (mp.x != 404 || mp.y != 404)
+    {
+        printf("Mouse position was not changed by state machine!\n");
         return 1;
     }
 
